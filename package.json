@@ -1,0 +1,18 @@
+{
+  "name": "10-calendar-backend",
+  "version": "1.0.0",
+  "description": "Backend Calendar",
+  "main": "index.js",
+  "scripts": {
+    "dev": "nodemon index.js",
+    "start": "node index.js"
+  },
+  "keywords": [],
+  "author": "Darwin Cumbajin",
+  "license": "ISC",
+  "dependencies": {
+    "dotenv": "^10.0.0",
+    "express": "^4.17.1",
+    "express-validator": "^6.12.0"
+  }
+}
