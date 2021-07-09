@@ -21,6 +21,7 @@ app.use(express.json());
 
 //Rutas
 app.use("/api/auth", require("./routers/auth"));
+app.use("/api/events", require("./routers/events"));
 
 //Escuchar la peticiones del servidor
 app.listen(process.env.PORT, () => {

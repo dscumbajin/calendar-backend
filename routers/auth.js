@@ -13,6 +13,7 @@ const {
   loginUsuario,
   revalidarToken,
 } = require("../controllers/auth");
+
 const { validarCampos } = require("../middlewares/validar-campos");
 
 const { validarJWT } = require("../middlewares/validar-jwt");
