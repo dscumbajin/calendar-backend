@@ -1,6 +1,7 @@
 const { response, request } = require("express");
 const bcrypt = require("bcryptjs");
 const Usuario = require("../models/Usuario");
+const { generarJWT } = require("../helpers/jwt");
 
 const crearUsuario = async (req = request, res = response) => {
   const { email, password } = req.body;
@@ -20,10 +21,13 @@ const crearUsuario = async (req = request, res = response) => {
     usuario.password = bcrypt.hashSync(password, salt);
 
     await usuario.save();
+    // Generar JWT
+    const token = await generarJWT(usuario.id, usuario.name);
     res.status(201).json({
       ok: true,
       uid: usuario.id,
       name: usuario.name,
+      token,
     });
   } catch (error) {
     console.error(error);
@@ -34,21 +38,52 @@ const crearUsuario = async (req = request, res = response) => {
   }
 };
 
-const loginUsuario = (req = request, res = response) => {
+const loginUsuario = async (req = request, res = response) => {
   const { email, password } = req.body;
 
-  res.status(200).json({
-    ok: true,
-    msg: "login",
-    email,
-    password,
-  });
+  try {
+    const usuario = await Usuario.findOne({ email });
+    if (!usuario) {
+      return res.status(400).json({
+        ok: false,
+        msg: `No existe un usuario con el correo: ${email} `,
+      });
+    }
+    // Confirmar los passwords
+    const validPassword = bcrypt.compareSync(password, usuario.password);
+
+    if (!validPassword) {
+      return res.status(400).json({
+        ok: false,
+        msg: `Password incorrecto`,
+      });
+    }
+
+    //Genera JWT
+    const token = await generarJWT(usuario.id, usuario.name);
+    res.status(200).json({
+      ok: true,
+      uid: usuario.id,
+      name: usuario.name,
+      token,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      ok: false,
+      msg: "Por favor comuníquese con el administrador",
+    });
+  }
 };
 
-const revalidarToken = (req = request, res = response) => {
+const revalidarToken = async(req = request, res = response) => {
+
+  const {uid, name} = req;
+  //Genera JWT
+  const token = await generarJWT(uid, name);
   res.json({
     ok: true,
-    msg: "revalidar token",
+    token
   });
 };
 
