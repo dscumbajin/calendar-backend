@@ -76,14 +76,15 @@ const loginUsuario = async (req = request, res = response) => {
   }
 };
 
-const revalidarToken = async(req = request, res = response) => {
-
-  const {uid, name} = req;
+const revalidarToken = async (req = request, res = response) => {
+  const { uid, name } = req;
   //Genera JWT
   const token = await generarJWT(uid, name);
   res.json({
     ok: true,
-    token
+    uid,
+    name,
+    token,
   });
 };
 
